@@ -5,209 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chord Drone</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #0a0e1a;
-            color: #f9fafb;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid #374151;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            color: #f59e0b;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: #9ca3af;
-        }
-
-        .card {
-            background: #151b2e;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .control-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            color: #d1d5db;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-        }
-
-        .sound-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-
-        .sound-btn {
-            padding: 0.875rem;
-            background: #1f2937;
-            border: 2px solid #374151;
-            border-radius: 8px;
-            color: #f9fafb;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .sound-btn:hover {
-            border-color: #f59e0b;
-        }
-
-        .sound-btn.active {
-            background: #f59e0b;
-            border-color: #f59e0b;
-            color: #0a0e1a;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #1f2937;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #f59e0b;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #f59e0b;
-            cursor: pointer;
-            border: none;
-        }
-
-        .range-value {
-            color: #f59e0b;
-            font-weight: 700;
-            float: right;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 1.25rem;
-            background: #f59e0b;
-            color: #0a0e1a;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .btn:hover {
-            background: #fbbf24;
-            transform: translateY(-1px);
-        }
-
-        .toggle-btn {
-            width: 100%;
-            padding: 1rem;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 8px;
-            color: #f9fafb;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .toggle-btn:hover {
-            border-color: #f59e0b;
-        }
-
-        .toggle-btn.active {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: #f59e0b;
-            color: #f59e0b;
-        }
-
-        .chord-display {
-            background: #1f2937;
-            border: 2px solid #374151;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .chord-symbol {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .chord-symbol.hidden {
-            color: #6b7280;
-            font-size: 2rem;
-        }
-
-        .chord-notes {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            font-family: monospace;
-        }
-
-        .status {
-            text-align: center;
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #f9fafb; min-height: 100vh; padding: 2rem 1rem; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #374151; }
+        h1 { font-size: 2.5rem; color: #f59e0b; font-weight: 700; margin-bottom: 0.5rem; }
+        .subtitle { color: #9ca3af; }
+        .card { background: #151b2e; border: 1px solid #374151; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .control-group { margin-bottom: 1.5rem; }
+        label { display: block; color: #d1d5db; font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; }
+        .sound-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .sound-btn { padding: 0.875rem; background: #1f2937; border: 2px solid #374151; border-radius: 8px; color: #f9fafb; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .sound-btn:hover { border-color: #f59e0b; }
+        .sound-btn.active { background: #f59e0b; border-color: #f59e0b; color: #0a0e1a; }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #1f2937; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #f59e0b; cursor: pointer; }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #f59e0b; cursor: pointer; border: none; }
+        .range-value { color: #f59e0b; font-weight: 700; float: right; }
+        .btn { width: 100%; padding: 1.25rem; background: #f59e0b; color: #0a0e1a; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
+        .btn:hover { background: #fbbf24; transform: translateY(-1px); }
+        .toggle-btn { width: 100%; padding: 1rem; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #f9fafb; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .toggle-btn:hover { border-color: #f59e0b; }
+        .toggle-btn.active { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #f59e0b; }
+        .chord-display { background: #1f2937; border: 2px solid #374151; border-radius: 12px; padding: 2rem; text-align: center; min-height: 140px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 1rem; }
+        .chord-symbol { font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .chord-symbol.hidden { color: #6b7280; font-size: 2rem; }
+        .chord-notes { font-size: 0.9rem; color: #9ca3af; font-family: monospace; }
+        .status { text-align: center; color: #9ca3af; font-size: 0.9rem; }
+        .chord-checks { display: flex; flex-direction: column; gap: 0.5rem; }
+        .check-label { display: flex; align-items: center; gap: 0.5rem; text-transform: none; color: #9ca3af; cursor: pointer; font-size: 0.85rem; font-weight: normal; }
+        .check-label:hover { color: #f9fafb; }
+        .check-label input { accent-color: #f59e0b; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Chord Drone</h1>
-            <p class="subtitle">Practice over random jazz chords</p>
         </div>
 
         <div class="card">
@@ -222,11 +56,34 @@
             </div>
 
             <div class="control-group">
-                <label>
-                    Duration 
-                    <span class="range-value"><span id="durVal">15</span>s</span>
-                </label>
+                <label>Duration <span class="range-value"><span id="durVal">15</span>s</span></label>
                 <input type="range" id="durSlider" min="5" max="60" value="15" step="5">
+            </div>
+
+            <div class="control-group">
+                <label>Chord Types</label>
+                <div class="chord-checks">
+                    <label class="check-label">
+                        <input type="checkbox" class="chord-check" value="major" checked>
+                        <span>Major (maj7, maj9, 6/9)</span>
+                    </label>
+                    <label class="check-label">
+                        <input type="checkbox" class="chord-check" value="minor" checked>
+                        <span>Minor (min7, min9, min11)</span>
+                    </label>
+                    <label class="check-label">
+                        <input type="checkbox" class="chord-check" value="dominant" checked>
+                        <span>Dominant (7, 9, 13, 7#11)</span>
+                    </label>
+                    <label class="check-label">
+                        <input type="checkbox" class="chord-check" value="altered" checked>
+                        <span>Altered (7b9, 7#9, 7alt)</span>
+                    </label>
+                    <label class="check-label">
+                        <input type="checkbox" class="chord-check" value="diminished" checked>
+                        <span>Diminished (min7b5, dim7)</span>
+                    </label>
+                </div>
             </div>
 
             <button class="btn" id="startBtn">Start</button>
@@ -246,21 +103,21 @@
         let ctx, oscs = [], gains = [], master, dry, wet, reverb;
         let playing = false, chord = null, timer = null;
         let dur = 15, timeLeft = 15, sound = 'strings', show = false;
+        let enabled = new Set(['major', 'minor', 'dominant', 'altered', 'diminished']);
 
         const roots = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
         const types = [
-            {n:'maj7',i:[0,4,7,11]},{n:'maj9',i:[0,4,7,11,14]},
-            {n:'maj7#11',i:[0,4,7,11,18]},{n:'6/9',i:[0,4,7,9,14]},
-            {n:'min7',i:[0,3,7,10]},{n:'min9',i:[0,3,7,10,14]},
-            {n:'min11',i:[0,3,7,10,14,17]},{n:'7',i:[0,4,7,10]},
-            {n:'9',i:[0,4,7,10,14]},{n:'13',i:[0,4,7,10,14,21]},
-            {n:'7#11',i:[0,4,7,10,18]},{n:'7b9',i:[0,4,7,10,13]},
-            {n:'7#9',i:[0,4,7,10,15]},{n:'7alt',i:[0,4,6,10,13]},
-            {n:'min7b5',i:[0,3,6,10]},{n:'dim7',i:[0,3,6,9]}
+            {n:'maj7',i:[0,4,7,11],c:'major'},{n:'maj9',i:[0,4,7,11,14],c:'major'},
+            {n:'maj7#11',i:[0,4,7,11,18],c:'major'},{n:'6/9',i:[0,4,7,9,14],c:'major'},
+            {n:'min7',i:[0,3,7,10],c:'minor'},{n:'min9',i:[0,3,7,10,14],c:'minor'},
+            {n:'min11',i:[0,3,7,10,14,17],c:'minor'},{n:'7',i:[0,4,7,10],c:'dominant'},
+            {n:'9',i:[0,4,7,10,14],c:'dominant'},{n:'13',i:[0,4,7,10,14,21],c:'dominant'},
+            {n:'7#11',i:[0,4,7,10,18],c:'dominant'},{n:'7b9',i:[0,4,7,10,13],c:'altered'},
+            {n:'7#9',i:[0,4,7,10,15],c:'altered'},{n:'7alt',i:[0,4,6,10,13],c:'altered'},
+            {n:'min7b5',i:[0,3,6,10],c:'diminished'},{n:'dim7',i:[0,3,6,9],c:'diminished'}
         ];
 
         const freq = s => 130.81 * Math.pow(2, s/12);
-
         const configs = {
             strings: {w1:'sawtooth',w2:'triangle',a:1.2,f:1200},
             pad: {w1:'sine',w2:'sine',a:0.8,f:2000},
@@ -271,12 +128,9 @@
         function init() {
             if (!ctx) {
                 ctx = new (window.AudioContext || window.webkitAudioContext)();
-                master = ctx.createGain();
-                master.gain.value = 0.7;
-                dry = ctx.createGain();
-                wet = ctx.createGain();
+                master = ctx.createGain(); master.gain.value = 0.7;
+                dry = ctx.createGain(); wet = ctx.createGain();
                 reverb = ctx.createConvolver();
-                
                 const sr = ctx.sampleRate, len = sr * 2.5;
                 const imp = ctx.createBuffer(2, len, sr);
                 const L = imp.getChannelData(0), R = imp.getChannelData(1);
@@ -286,19 +140,17 @@
                     R[i] = (Math.random() * 2 - 1) * e;
                 }
                 reverb.buffer = imp;
-                
-                dry.gain.value = 0.4;
-                wet.gain.value = 0.6;
-                dry.connect(master);
-                wet.connect(reverb);
-                reverb.connect(master);
-                master.connect(ctx.destination);
+                dry.gain.value = 0.4; wet.gain.value = 0.6;
+                dry.connect(master); wet.connect(reverb);
+                reverb.connect(master); master.connect(ctx.destination);
             }
         }
 
         function gen() {
+            const available = types.filter(t => enabled.has(t.c));
+            if (available.length === 0) { enabled.add('major'); return gen(); }
             const r = roots[~~(Math.random() * 12)];
-            const t = types[~~(Math.random() * types.length)];
+            const t = available[~~(Math.random() * available.length)];
             const ro = roots.indexOf(r);
             let v = [t.i[0] - 12, ...t.i];
             if (t.i.length >= 3) v.push(t.i[Math.random() > 0.5 ? 1 : 2] + 12);
@@ -311,31 +163,23 @@
         }
 
         function play(ch) {
-            stop();
-            oscs = []; gains = [];
+            stop(); oscs = []; gains = [];
             const now = ctx.currentTime, cfg = configs[sound];
-            
             ch.freqs.forEach(f => {
                 [-8, 0, 8].forEach(d => {
                     const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
                     const og = ctx.createGain(), ng = ctx.createGain();
                     const flt = ctx.createBiquadFilter();
-                    
                     o1.type = cfg.w1; o2.type = cfg.w2;
                     o1.frequency.value = o2.frequency.value = f;
                     o1.detune.value = o2.detune.value = d;
-                    og.gain.value = 0.5;
-                    flt.type = 'lowpass';
-                    flt.frequency.value = cfg.f;
-                    flt.Q.value = 1;
-                    
+                    og.gain.value = 0.5; flt.type = 'lowpass';
+                    flt.frequency.value = cfg.f; flt.Q.value = 1;
                     const v = Math.min(0.15 / Math.sqrt(f / 200), 0.2);
                     ng.gain.setValueAtTime(0, now);
                     ng.gain.linearRampToValueAtTime(v, now + cfg.a);
-                    
-                    o1.connect(og); o2.connect(og);
-                    og.connect(flt); flt.connect(ng);
-                    ng.connect(dry); ng.connect(wet);
+                    o1.connect(og); o2.connect(og); og.connect(flt);
+                    flt.connect(ng); ng.connect(dry); ng.connect(wet);
                     o1.start(now); o2.start(now);
                     oscs.push(o1, o2); gains.push(ng);
                 });
@@ -387,23 +231,24 @@
         document.querySelectorAll('.sound-btn').forEach(b => {
             b.onclick = () => {
                 document.querySelectorAll('.sound-btn').forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
-                sound = b.dataset.sound;
+                b.classList.add('active'); sound = b.dataset.sound;
                 playing && chord && play(chord);
+            };
+        });
+
+        document.querySelectorAll('.chord-check').forEach(cb => {
+            cb.onchange = e => {
+                e.target.checked ? enabled.add(e.target.value) : enabled.delete(e.target.value);
             };
         });
 
         startBtn.onclick = () => {
             if (!playing) {
-                init();
-                playing = true;
-                startBtn.textContent = 'Stop';
-                next();
+                init(); playing = true;
+                startBtn.textContent = 'Stop'; next();
             } else {
-                playing = false;
-                startBtn.textContent = 'Start';
-                stop();
-                timer && clearInterval(timer);
+                playing = false; startBtn.textContent = 'Start';
+                stop(); timer && clearInterval(timer);
                 status.textContent = 'Stopped';
             }
         };
