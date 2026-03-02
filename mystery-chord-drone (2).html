@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Chord Drone - Strings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e7;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .time {
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: #06b6d4;
+        }
+
+        .chord-label {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .chord-display {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e4e4e7;
+            transition: opacity 0.3s;
+        }
+
+        .chord-display.hidden {
+            opacity: 0.2;
+            font-size: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Lexend', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .settings {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .setting-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .setting-value {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #e4e4e7;
+            font-family: 'Lexend', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #e4e4e7;
+        }
+
+        input[type="range"] {
+            width: 140px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #06b6d4;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #06b6d4;
+            cursor: pointer;
+            border: none;
+        }
+
+        .chord-types-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chord-types-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .checkbox-label:hover {
+            color: #e4e4e7;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #06b6d4;
+        }
+
+        .note-display {
+            font-size: 0.85rem;
+            text-align: center;
+            color: #64748b;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .playing .time {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Mystery Chord Strings</h1>
+            <p class="subtitle">Play over random jazz chords with lush reverb</p>
+
+            <div class="timer-display" id="timerDisplay">
+                <div class="time" id="timeRemaining">15</div>
+            </div>
+
+            <div class="chord-label">Current Chord</div>
+            <div class="chord-display hidden" id="chordDisplay">???</div>
+            <div class="note-display" id="noteDisplay"></div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="playBtn">Start</button>
+                <button class="btn btn-secondary" id="revealBtn" disabled>Reveal Chord</button>
+                <button class="btn btn-secondary" id="nextBtn" disabled>Next Chord</button>
+            </div>
+
+            <div class="settings">
+                <div class="setting-row">
+                    <span class="setting-label">Reverb Amount</span>
+                    <div>
+                        <input type="range" id="reverbSlider" min="0" max="100" value="60" step="10">
+                        <span class="setting-value"><span id="reverbValue">60</span>%</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">Duration per chord</span>
+                    <div>
+                        <input type="range" id="durationSlider" min="5" max="60" value="15" step="5">
+                        <span class="setting-value"><span id="durationValue">15</span>s</span>
+                    </div>
+                </div>
+                <div class="chord-types-section">
+                    <div class="setting-label" style="margin-bottom: 0.75rem;">Chord Types</div>
+                    <div class="chord-types-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="chord-type-checkbox" value="major" checked>
+                            <span>Major (maj7, maj9, 6/9)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="chord-type-checkbox" value="minor" checked>
+                            <span>Minor (min7, min9, min11)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="chord-type-checkbox" value="dominant" checked>
+                            <span>Dominant (7, 9, 13)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="chord-type-checkbox" value="altered" checked>
+                            <span>Altered (7b9, 7#9, 7alt)</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="chord-type-checkbox" value="diminished" checked>
+                            <span>Diminished (dim7, ø7)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio setup
+        let audioContext;
+        let oscillators = [];
+        let gainNodes = [];
+        let masterGain;
+        let reverbNode;
+        let dryGain;
+        let wetGain;
+        let reverbAmount = 0.6;
+        let isPlaying = false;
+        let currentChord = null;
+        let chordTimer = null;
+        let timeRemaining = 15;
+        let chordDuration = 15;
+        let isRevealed = false;
+
+        // DOM elements
+        const playBtn = document.getElementById('playBtn');
+        const revealBtn = document.getElementById('revealBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const chordDisplay = document.getElementById('chordDisplay');
+        const noteDisplay = document.getElementById('noteDisplay');
+        const timeRemainingEl = document.getElementById('timeRemaining');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        const reverbSlider = document.getElementById('reverbSlider');
+        const reverbValue = document.getElementById('reverbValue');
+
+        // Chord definitions
+        const roots = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        
+        const chordTypes = [
+            // Major
+            { name: 'maj7', intervals: [0, 4, 7, 11], category: 'major' },
+            { name: 'maj9', intervals: [0, 4, 7, 11, 14], category: 'major' },
+            { name: 'maj7#11', intervals: [0, 4, 7, 11, 18], category: 'major' },
+            { name: '6/9', intervals: [0, 4, 7, 9, 14], category: 'major' },
+            // Minor
+            { name: 'min7', intervals: [0, 3, 7, 10], category: 'minor' },
+            { name: 'min9', intervals: [0, 3, 7, 10, 14], category: 'minor' },
+            { name: 'min11', intervals: [0, 3, 7, 10, 14, 17], category: 'minor' },
+            // Dominant
+            { name: '7', intervals: [0, 4, 7, 10], category: 'dominant' },
+            { name: '9', intervals: [0, 4, 7, 10, 14], category: 'dominant' },
+            { name: '13', intervals: [0, 4, 7, 10, 14, 21], category: 'dominant' },
+            { name: '7#11', intervals: [0, 4, 7, 10, 18], category: 'dominant' },
+            // Altered
+            { name: '7b9', intervals: [0, 4, 7, 10, 13], category: 'altered' },
+            { name: '7#9', intervals: [0, 4, 7, 10, 15], category: 'altered' },
+            { name: '7alt', intervals: [0, 4, 6, 10, 13], category: 'altered' },
+            // Diminished
+            { name: 'min7b5', intervals: [0, 3, 6, 10], category: 'diminished' },
+            { name: 'dim7', intervals: [0, 3, 6, 9], category: 'diminished' },
+        ];
+
+        // Track enabled chord categories
+        let enabledCategories = new Set(['major', 'minor', 'dominant', 'altered', 'diminished']);
+
+        // Note frequencies - C3 for good balance
+        const baseFreq = 130.81; // C3
+        
+        function noteToFreq(semitones) {
+            return baseFreq * Math.pow(2, semitones / 12);
+        }
+
+        function generateRandomChord() {
+            // Filter chord types by enabled categories
+            const availableChords = chordTypes.filter(type => enabledCategories.has(type.category));
+            
+            if (availableChords.length === 0) {
+                // Fallback if no categories selected
+                enabledCategories.add('major');
+                return generateRandomChord();
+            }
+            
+            const root = roots[Math.floor(Math.random() * roots.length)];
+            const type = availableChords[Math.floor(Math.random() * availableChords.length)];
+            const rootOffset = roots.indexOf(root);
+            
+            // Create a richer voicing with bass and doubled notes
+            let baseVoicing = [...type.intervals];
+            
+            // Add bass note (root an octave lower)
+            let voicing = [baseVoicing[0] - 12];
+            
+            // Add the main chord tones
+            baseVoicing.forEach(interval => {
+                voicing.push(interval);
+            });
+            
+            // Randomly double some voices an octave higher for thickness
+            if (baseVoicing.length >= 3) {
+                // Double the 3rd or 7th up an octave
+                const toDouble = Math.random() > 0.5 ? 1 : Math.min(2, baseVoicing.length - 1);
+                voicing.push(baseVoicing[toDouble] + 12);
+            }
+            
+            // Sometimes add the root on top
+            if (Math.random() > 0.6) {
+                voicing.push(baseVoicing[0] + 24);
+            }
+            
+            // Convert intervals to frequencies
+            const frequencies = voicing.map(interval => 
+                noteToFreq(rootOffset + interval)
+            );
+            
+            // Get note names for display
+            const noteNames = voicing.map(interval => {
+                const noteIndex = (rootOffset + interval) % 12;
+                return roots[noteIndex];
+            });
+            
+            return {
+                symbol: root + type.name,
+                frequencies,
+                notes: noteNames.join(' - ')
+            };
+        }
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Master output
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = 0.7;
+                
+                // Dry/wet mix for reverb
+                dryGain = audioContext.createGain();
+                wetGain = audioContext.createGain();
+                
+                // Create reverb using convolver
+                reverbNode = audioContext.createConvolver();
+                createReverbImpulse(2.5, 2.5); // 2.5 second reverb
+                
+                // Set initial reverb mix
+                updateReverbMix();
+                
+                // Connect the signal chain
+                dryGain.connect(masterGain);
+                wetGain.connect(reverbNode);
+                reverbNode.connect(masterGain);
+                masterGain.connect(audioContext.destination);
+            }
+        }
+
+        function createReverbImpulse(duration, decay) {
+            const rate = audioContext.sampleRate;
+            const length = rate * duration;
+            const impulse = audioContext.createBuffer(2, length, rate);
+            const impulseL = impulse.getChannelData(0);
+            const impulseR = impulse.getChannelData(1);
+            
+            for (let i = 0; i < length; i++) {
+                const n = i / length;
+                const envelope = Math.exp(-n * decay);
+                impulseL[i] = (Math.random() * 2 - 1) * envelope;
+                impulseR[i] = (Math.random() * 2 - 1) * envelope;
+            }
+            
+            reverbNode.buffer = impulse;
+        }
+
+        function updateReverbMix() {
+            dryGain.gain.value = 1 - reverbAmount;
+            wetGain.gain.value = reverbAmount;
+        }
+
+        function playChord(chord) {
+            stopChord();
+            
+            oscillators = [];
+            gainNodes = [];
+            
+            const now = audioContext.currentTime;
+            const attack = 1.2;
+            const release = 0.8;
+            
+            chord.frequencies.forEach((freq, index) => {
+                // Create 3 slightly detuned oscillators per note for richness
+                const detuneAmounts = [-8, 0, 8]; // cents
+                
+                detuneAmounts.forEach(detune => {
+                    // Mix of sawtooth and triangle for warmth
+                    const osc1 = audioContext.createOscillator();
+                    const osc2 = audioContext.createOscillator();
+                    const oscGain = audioContext.createGain();
+                    const noteGain = audioContext.createGain();
+                    
+                    osc1.type = 'sawtooth';
+                    osc2.type = 'triangle';
+                    
+                    osc1.frequency.value = freq;
+                    osc2.frequency.value = freq;
+                    
+                    osc1.detune.value = detune;
+                    osc2.detune.value = detune;
+                    
+                    // Mix the two oscillators
+                    oscGain.gain.value = 0.5;
+                    
+                    // Low-pass filter for warmth
+                    const filter = audioContext.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 1200;
+                    filter.Q.value = 1;
+                    
+                    // Volume varies by frequency (lower notes louder)
+                    const freqRatio = freq / 200;
+                    const baseVolume = Math.min(0.15 / Math.sqrt(freqRatio), 0.2);
+                    
+                    // Envelope
+                    noteGain.gain.setValueAtTime(0, now);
+                    noteGain.gain.linearRampToValueAtTime(baseVolume, now + attack);
+                    
+                    // Connect signal chain
+                    osc1.connect(oscGain);
+                    osc2.connect(oscGain);
+                    oscGain.connect(filter);
+                    filter.connect(noteGain);
+                    noteGain.connect(dryGain);
+                    noteGain.connect(wetGain);
+                    
+                    osc1.start(now);
+                    osc2.start(now);
+                    
+                    oscillators.push(osc1, osc2);
+                    gainNodes.push(noteGain);
+                });
+            });
+        }
+
+        function stopChord() {
+            const release = 0.8;
+            
+            oscillators.forEach((osc, index) => {
+                const gainIndex = Math.floor(index / 2); // Two oscillators per gain node
+                if (gainIndex < gainNodes.length) {
+                    const gain = gainNodes[gainIndex];
+                    const now = audioContext.currentTime;
+                    
+                    // Fade out
+                    gain.gain.cancelScheduledValues(now);
+                    gain.gain.setValueAtTime(gain.gain.value, now);
+                    gain.gain.linearRampToValueAtTime(0, now + release);
+                    
+                    osc.stop(now + release);
+                }
+            });
+            
+            oscillators = [];
+            gainNodes = [];
+        }
+
+        function nextChord() {
+            currentChord = generateRandomChord();
+            isRevealed = false;
+            
+            chordDisplay.textContent = '???';
+            chordDisplay.classList.add('hidden');
+            noteDisplay.textContent = '';
+            
+            if (isPlaying) {
+                playChord(currentChord);
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            if (chordTimer) clearInterval(chordTimer);
+            
+            timeRemaining = chordDuration;
+            updateTimerDisplay();
+            
+            chordTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    nextChord();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            timeRemainingEl.textContent = timeRemaining;
+        }
+
+        // Event listeners
+        playBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                initAudio();
+                isPlaying = true;
+                playBtn.textContent = 'Stop';
+                revealBtn.disabled = false;
+                nextBtn.disabled = false;
+                timerDisplay.classList.add('playing');
+                nextChord();
+            } else {
+                isPlaying = false;
+                playBtn.textContent = 'Start';
+                revealBtn.disabled = true;
+                nextBtn.disabled = true;
+                timerDisplay.classList.remove('playing');
+                stopChord();
+                if (chordTimer) clearInterval(chordTimer);
+            }
+        });
+
+        revealBtn.addEventListener('click', () => {
+            if (!isRevealed && currentChord) {
+                chordDisplay.textContent = currentChord.symbol;
+                chordDisplay.classList.remove('hidden');
+                noteDisplay.textContent = currentChord.notes;
+                isRevealed = true;
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                nextChord();
+            }
+        });
+
+        durationSlider.addEventListener('input', (e) => {
+            chordDuration = parseInt(e.target.value);
+            durationValue.textContent = chordDuration;
+        });
+
+        reverbSlider.addEventListener('input', (e) => {
+            reverbAmount = parseInt(e.target.value) / 100;
+            reverbValue.textContent = e.target.value;
+            updateReverbMix();
+        });
+
+        // Chord type checkbox handling
+        document.querySelectorAll('.chord-type-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const category = e.target.value;
+                if (e.target.checked) {
+                    enabledCategories.add(category);
+                } else {
+                    enabledCategories.delete(category);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
