@@ -1305,14 +1305,18 @@
         };
     });
 
+    // Touching any of these means the musician is deliberately steering away
+    // from a pinned chord (if one was set via ?chord=) — drop the lock so
+    // generation immediately reflects what's actually checked, rather than
+    // silently ignoring the change like before.
     document.querySelectorAll('.shape-check').forEach(cb=>{
-        cb.onchange=e=>{ e.target.checked?droneEnabledShapes.add(e.target.value):droneEnabledShapes.delete(e.target.value); };
+        cb.onchange=e=>{ droneForcedType=null; e.target.checked?droneEnabledShapes.add(e.target.value):droneEnabledShapes.delete(e.target.value); };
     });
     document.querySelectorAll('.seventh-check').forEach(cb=>{
-        cb.onchange=e=>{ e.target.checked?droneEnabledSevenths.add(e.target.value):droneEnabledSevenths.delete(e.target.value); };
+        cb.onchange=e=>{ droneForcedType=null; e.target.checked?droneEnabledSevenths.add(e.target.value):droneEnabledSevenths.delete(e.target.value); };
     });
     document.querySelectorAll('.tension-check').forEach(cb=>{
-        cb.onchange=e=>{ e.target.checked?droneEnabledTensions.add(e.target.value):droneEnabledTensions.delete(e.target.value); };
+        cb.onchange=e=>{ droneForcedType=null; e.target.checked?droneEnabledTensions.add(e.target.value):droneEnabledTensions.delete(e.target.value); };
     });
 
     document.getElementById('droneStartBtn').onclick=()=>{
@@ -1475,6 +1479,48 @@
         document.getElementById('secControls').style.display='none';
     };
 
+    // Maps each fixed-vocabulary chord (only ever reached via a URL-pinned
+    // ?chord= param) to the shape/seventh/tension checkboxes that produce it,
+    // so a pinned chord shows on screen as if the user had actually dialed it
+    // in themselves — not a UI that's silently disconnected from what's
+    // really about to play. 7alt is the one approximation: the checkbox
+    // system has no b5/altered-5th option, only 9/11/13-family tensions, so
+    // there's no exact equivalent — this is the closest stand-in, not a
+    // perfect match (the pinned chord itself still sounds correct either way).
+    const DRONE_TYPE_TO_CHECKS = {
+        'maj7':    { shape: 'major',      seventh: 'maj7', tensions: {} },
+        'maj9':    { shape: 'major',      seventh: 'maj7', tensions: { ninth: '9' } },
+        'maj7#11': { shape: 'major',      seventh: 'maj7', tensions: { eleventh: '#11' } },
+        '6/9':     { shape: 'major',      seventh: 'six',  tensions: { ninth: '9' } },
+        'min7':    { shape: 'minor',      seventh: 'dom7', tensions: {} },
+        'min9':    { shape: 'minor',      seventh: 'dom7', tensions: { ninth: '9' } },
+        'min11':   { shape: 'minor',      seventh: 'dom7', tensions: { ninth: '9', eleventh: '11' } },
+        '7':       { shape: 'major',      seventh: 'dom7', tensions: {} },
+        '9':       { shape: 'major',      seventh: 'dom7', tensions: { ninth: '9' } },
+        '13':      { shape: 'major',      seventh: 'dom7', tensions: { ninth: '9', thirteenth: '13' } },
+        '7#11':    { shape: 'major',      seventh: 'dom7', tensions: { eleventh: '#11' } },
+        '7b9':     { shape: 'major',      seventh: 'dom7', tensions: { ninth: 'b9' } },
+        '7#9':     { shape: 'major',      seventh: 'dom7', tensions: { ninth: '#9' } },
+        '7alt':    { shape: 'major',      seventh: 'dom7', tensions: { ninth: 'b9' } }, // approximation — see note above
+        'min7b5':  { shape: 'diminished', seventh: 'dom7', tensions: {} },
+        'dim7':    { shape: 'diminished', seventh: 'dim7', tensions: {} },
+    };
+
+    function applyPinnedChordChecks(chordName) {
+        const map = DRONE_TYPE_TO_CHECKS[chordName];
+        if (!map) return;
+        const tensionIds = Object.values(map.tensions);
+
+        droneEnabledShapes = new Set([map.shape]);
+        document.querySelectorAll('.shape-check').forEach(cb => { cb.checked = cb.value === map.shape; });
+
+        droneEnabledSevenths = new Set([map.seventh]);
+        document.querySelectorAll('.seventh-check').forEach(cb => { cb.checked = cb.value === map.seventh; });
+
+        droneEnabledTensions = new Set(tensionIds);
+        document.querySelectorAll('.tension-check').forEach(cb => { cb.checked = tensionIds.includes(cb.value); });
+    }
+
     // ── URL param configuration ──────────────────────────────────────────
     // When opened plain (no params — e.g. from the Practice Tools grid), this stays
     // the default random, hidden-chord ear-training tool exactly as built.
@@ -1496,11 +1542,16 @@
 
         let pinnedHarmony = false; // true once we lock a specific chord/root/circle
 
-        // Lock to one exact chord quality
+        // Lock to one exact chord quality — and sync the checkboxes to match,
+        // so what's on screen looks exactly like what you'd have entered
+        // yourself. The lock itself (droneForcedType) drops the instant the
+        // user touches any shape/seventh/tension control — see those handlers
+        // below — so nothing stays stuck once you start editing.
         if (chordParam) {
             const match = droneTypes.find(t => t.n === chordParam);
             if (match) {
                 droneForcedType = match;
+                applyPinnedChordChecks(match.n);
                 pinnedHarmony = true;
             }
         }
