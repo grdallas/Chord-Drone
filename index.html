@@ -524,9 +524,11 @@
                 <label class="check-label"><input type="checkbox" class="shape-check" value="minor" checked><span>Minor</span></label>
                 <label class="check-label"><input type="checkbox" class="shape-check" value="diminished" checked><span>Diminished</span></label>
                 <label class="check-label"><input type="checkbox" class="shape-check" value="augmented"><span>Augmented</span></label>
+                <label class="check-label"><input type="checkbox" class="shape-check" value="b5"><span>♭5</span></label>
                 <label class="check-label"><input type="checkbox" class="shape-check" value="sus2"><span>Sus2</span></label>
                 <label class="check-label"><input type="checkbox" class="shape-check" value="sus4"><span>Sus4</span></label>
             </div>
+            <div style="font-size:0.68rem;color:var(--ink-muted);font-style:italic;margin-top:0.3rem;">♯5 chords (7♯5, maj7♯5) come from Augmented above — its raised 5th is the same note. ♭5 here covers 7♭5 and maj7♭5.</div>
         </div>
         <div class="control-group">
             <label class="section-label">Seventh / Sixth</label>
@@ -673,6 +675,7 @@
         {n:'9',i:[0,4,7,10,14],c:'dominant'},{n:'13',i:[0,4,7,10,14,21],c:'dominant'},
         {n:'7#11',i:[0,4,7,10,18],c:'dominant'},{n:'7b9',i:[0,4,7,10,13],c:'altered'},
         {n:'7#9',i:[0,4,7,10,15],c:'altered'},{n:'7alt',i:[0,4,6,10,13],c:'altered'},
+        {n:'7b5',i:[0,4,6,10],c:'altered'},{n:'maj7b5',i:[0,4,6,11],c:'major'},
         {n:'min7b5',i:[0,3,6,10],c:'diminished'},{n:'dim7',i:[0,3,6,9],c:'diminished'}
     ];
     const droneFreq = s => 130.81*Math.pow(2,s/12);
@@ -742,6 +745,9 @@
             {mode:'Altered',           parentOffset:1,  parentType:'Mel. Minor', tier:'color'},
             {mode:'Whole Tone',                                                   tier:'color'},
         ],
+        '7b5': [
+            {mode:'Whole Tone',                                                   tier:'core'},
+        ],
         'min7b5': [
             {mode:'Locrian',           parentOffset:1,  parentType:'Major',      tier:'core'},
             {mode:'Locrian ♮2',        parentOffset:3,  parentType:'Mel. Minor', tier:'color'},
@@ -766,6 +772,7 @@
         minor:      { triad:[0,3,7] },
         diminished: { triad:[0,3,6] },
         augmented:  { triad:[0,4,8] },
+        b5:         { triad:[0,4,6] },
         sus2:       { triad:[0,2,7] },
         sus4:       { triad:[0,5,7] },
     };
@@ -777,6 +784,7 @@
         minor:      { none:{i:null,sym:'m'},        six:{i:9,sym:'m6'},  maj7:{i:11,sym:'m(maj7)'},     dom7:{i:10,sym:'m7'} },
         diminished: { none:{i:null,sym:'\u00b0'},   dim7:{i:9,sym:'\u00b07'},                            dom7:{i:10,sym:'m7\u266d5'} },
         augmented:  { none:{i:null,sym:'+'},                             maj7:{i:11,sym:'maj7#5'},      dom7:{i:10,sym:'7#5'} },
+        b5:         { none:{i:null,sym:'(♭5)'},                     maj7:{i:11,sym:'maj7♭5'}, dom7:{i:10,sym:'7♭5'} },
         sus2:       { none:{i:null,sym:'sus2'},                                                          dom7:{i:10,sym:'7sus2'} },
         sus4:       { none:{i:null,sym:'sus4'},                                                          dom7:{i:10,sym:'7sus4'} },
     };
@@ -806,6 +814,12 @@
             // and is the exact same note as a ♭13 (redundant, not a new color).
             return seventhId === 'none' ? [] : ['ninth', 'eleventh'];
         }
+        if (shapeId === 'b5') {
+            // No 11th-family tension here — ♯11 is the exact same note as this
+            // shape's own ♭5 (redundant, not a new color). ♭13/13 are both fine
+            // since neither clashes with a ♭5.
+            return seventhId === 'none' ? [] : ['ninth', 'thirteenth'];
+        }
         // major, minor
         if (seventhId === 'none') return [];
         if (seventhId === 'six') return ['ninth'];
@@ -822,6 +836,7 @@
         minor:      { maj7: ['9','13'],       six: ['9'], dom7: ['9','11','13'] },
         diminished: { dom7: ['9'], dim7: ['9'] },
         augmented:  { maj7: ['9'], dom7: ['9'] },
+        b5:         { maj7: ['9','13'], dom7: ['9','#9','b9','13','b13'] },
         sus2:       { dom7: ['9','13'] },
         sus4:       { dom7: ['9','13'] },
     };
@@ -876,6 +891,14 @@
                     {mode:'Phrygian', parentOffset:8, parentType:'Major', tier:'core'},
                 ];
             }
+        }
+
+        if (shapeId === 'b5') {
+            // Whole Tone is the honest fit here — it's the scale that actually
+            // omits the natural 5th, matching a chord where the 5th is genuinely
+            // altered rather than extended. maj7♭5 is rare/exotic enough that no
+            // confident suggestion is offered, same philosophy as elsewhere here.
+            if (seventhId === 'dom7') return [{mode:'Whole Tone', tier:'core'}];
         }
 
         if (shapeId === 'diminished') {
@@ -1483,10 +1506,7 @@
     // ?chord= param) to the shape/seventh/tension checkboxes that produce it,
     // so a pinned chord shows on screen as if the user had actually dialed it
     // in themselves — not a UI that's silently disconnected from what's
-    // really about to play. 7alt is the one approximation: the checkbox
-    // system has no b5/altered-5th option, only 9/11/13-family tensions, so
-    // there's no exact equivalent — this is the closest stand-in, not a
-    // perfect match (the pinned chord itself still sounds correct either way).
+    // really about to play.
     const DRONE_TYPE_TO_CHECKS = {
         'maj7':    { shape: 'major',      seventh: 'maj7', tensions: {} },
         'maj9':    { shape: 'major',      seventh: 'maj7', tensions: { ninth: '9' } },
@@ -1501,7 +1521,9 @@
         '7#11':    { shape: 'major',      seventh: 'dom7', tensions: { eleventh: '#11' } },
         '7b9':     { shape: 'major',      seventh: 'dom7', tensions: { ninth: 'b9' } },
         '7#9':     { shape: 'major',      seventh: 'dom7', tensions: { ninth: '#9' } },
-        '7alt':    { shape: 'major',      seventh: 'dom7', tensions: { ninth: 'b9' } }, // approximation — see note above
+        '7alt':    { shape: 'b5',         seventh: 'dom7', tensions: { ninth: 'b9' } },
+        '7b5':     { shape: 'b5',         seventh: 'dom7', tensions: {} },
+        'maj7b5':  { shape: 'b5',         seventh: 'maj7', tensions: {} },
         'min7b5':  { shape: 'diminished', seventh: 'dom7', tensions: {} },
         'dim7':    { shape: 'diminished', seventh: 'dim7', tensions: {} },
     };
