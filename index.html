@@ -748,13 +748,11 @@
         let validSevenths = Object.keys(sevenDefs).filter(k => droneEnabledSevenths.has(k));
         if (!validSevenths.length) {
             // Nothing checked at all (or nothing checked works for this shape) —
-            // rather than retrying forever, self-heal by enabling a safe default
-            // so this and every future generation has something to work with.
-            const fallback = sevenDefs.dom7 ? 'dom7' : Object.keys(sevenDefs)[0];
-            droneEnabledSevenths.add(fallback);
-            validSevenths = [fallback];
-            const cb = document.querySelector(`.seventh-check[value="${fallback}"]`);
-            if (cb) cb.checked = true;
+            // a bare triad is always valid for every shape, so just play that for
+            // this one generation rather than silently checking a box the user
+            // didn't check (checking only a shape and nothing else should mean
+            // "just triads," not force a 7th onto it).
+            validSevenths = ['none'];
         }
         const seventhId = validSevenths[~~(Math.random() * validSevenths.length)];
         const seventhDef = sevenDefs[seventhId];
