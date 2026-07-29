@@ -421,27 +421,6 @@
         .history-item .h-sym { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--ink); }
         .history-item .h-num { font-size: 0.65rem; color: var(--ink-muted); }
 
-        /* ── Scale Suggestions ──────────────────────────────────────────── */
-        .chord-scales {
-            font-size: 0.72rem;
-            letter-spacing: 0.04em;
-            margin-top: 0.35rem;
-            font-style: italic;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.3rem 0.6rem;
-        }
-        .scale-tag {
-            display: inline-block;
-        }
-        .scale-tag.core {
-            color: var(--amber);
-        }
-        .scale-tag.color {
-            color: var(--blue);
-            opacity: 0.85;
-        }
     </style>
 </head>
 <body>
@@ -528,7 +507,6 @@
                 <label class="check-label"><input type="checkbox" class="shape-check" value="sus2"><span>Sus2</span></label>
                 <label class="check-label"><input type="checkbox" class="shape-check" value="sus4"><span>Sus4</span></label>
             </div>
-            <div style="font-size:0.68rem;color:var(--ink-muted);font-style:italic;margin-top:0.3rem;">♯5 chords (7♯5, maj7♯5) come from Augmented above — its raised 5th is the same note. ♭5 here covers 7♭5 and maj7♭5.</div>
         </div>
         <div class="control-group">
             <label class="section-label">Seventh / Sixth</label>
@@ -539,7 +517,6 @@
                 <label class="check-label"><input type="checkbox" class="seventh-check" value="dom7" checked><span>Dominant / ♭7</span></label>
                 <label class="check-label"><input type="checkbox" class="seventh-check" value="dim7" checked><span>Diminished 7th</span></label>
             </div>
-            <div style="font-size:0.68rem;color:var(--ink-muted);font-style:italic;margin-top:0.3rem;">Only the options that make sense for the active shape are used — e.g. a diminished triad ignores "Major 7th."</div>
         </div>
         <div class="control-group">
             <label class="section-label">Tensions</label>
@@ -567,12 +544,10 @@
                     </div>
                 </div>
             </div>
-            <div style="font-size:0.68rem;color:var(--ink-muted);font-style:italic;margin-top:0.4rem;">Checking more than one option in a row (e.g. ♭9 and 9) just means either can appear — never both on the same chord. Tensions vary chord to chord rather than always stacking.</div>
             <label class="check-label" style="margin-top:0.7rem;">
                 <input type="checkbox" id="complexChordsToggle">
                 <span>Include complex/unusual tensions (e.g. maj7♭9)</span>
             </label>
-            <div style="font-size:0.68rem;color:var(--ink-muted);font-style:italic;margin-top:0.3rem;">Off by default: tensions are limited to standard jazz usage per chord type (a dominant 7 can take any alteration, but a maj7 or min7 chord sticks to natural 9/13/♯11). Check this to also allow the unusual combinations, like a ♭9 over a major 7th chord.</div>
         </div>
         <div class="control-group">
             <div class="range-row">
@@ -601,7 +576,6 @@
         <div class="chord-display">
             <div class="chord-symbol hidden" id="droneSymbol">—</div>
             <div class="chord-notes" id="droneNotes"></div>
-            <div class="chord-scales" id="droneScales"></div>
         </div>
         <div class="progress-wrap" id="droneProgressWrap" style="display:none">
             <div class="progress-bar" id="droneProgressBar"></div>
@@ -680,90 +654,11 @@
     ];
     const droneFreq = s => 130.81*Math.pow(2,s/12);
 
-    // Each scale entry: { mode, parent: semitones up from chord root to parent scale root }
-    // Symmetric/non-diatonic scales (diminished, altered) have no diatonic parent — parentOffset omitted
-    // tier: 'core' = diatonic major modes (amber)
-    //        'color' = mel.minor, harm.minor, harm.major, symmetric (blue)
-    // parentOffset: semitones from chord root up to parent scale root
-    // parentType label shown in parens
-    const droneScaleMap = {
-        'maj7': [
-            {mode:'Ionian',            parentOffset:0,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian',            parentOffset:7,  parentType:'Major',      tier:'core'},
-        ],
-        'maj9': [
-            {mode:'Ionian',            parentOffset:0,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian',            parentOffset:7,  parentType:'Major',      tier:'core'},
-        ],
-        'maj7#11': [
-            {mode:'Lydian',            parentOffset:7,  parentType:'Major',      tier:'core'},
-        ],
-        '6/9': [
-            {mode:'Ionian',            parentOffset:0,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian',            parentOffset:7,  parentType:'Major',      tier:'core'},
-        ],
-        'min7': [
-            {mode:'Dorian',            parentOffset:10, parentType:'Major',      tier:'core'},
-            {mode:'Aeolian',           parentOffset:3,  parentType:'Major',      tier:'core'},
-            {mode:'Phrygian',          parentOffset:8,  parentType:'Major',      tier:'core'},
-        ],
-        'min9': [
-            {mode:'Dorian',            parentOffset:10, parentType:'Major',      tier:'core'},
-            {mode:'Aeolian',           parentOffset:3,  parentType:'Major',      tier:'core'},
-        ],
-        'min11': [
-            {mode:'Dorian',            parentOffset:10, parentType:'Major',      tier:'core'},
-            {mode:'Phrygian',          parentOffset:8,  parentType:'Major',      tier:'core'},
-            {mode:'Dorian ♭2',         parentOffset:10, parentType:'Mel. Minor', tier:'color'},
-        ],
-        '7': [
-            {mode:'Mixolydian',        parentOffset:5,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian Dominant',   parentOffset:7,  parentType:'Mel. Minor', tier:'color'},
-            {mode:'Mixolydian ♭6',     parentOffset:5,  parentType:'Mel. Minor', tier:'color'},
-        ],
-        '9': [
-            {mode:'Mixolydian',        parentOffset:5,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian Dominant',   parentOffset:7,  parentType:'Mel. Minor', tier:'color'},
-        ],
-        '13': [
-            {mode:'Mixolydian',        parentOffset:5,  parentType:'Major',      tier:'core'},
-            {mode:'Lydian Dominant',   parentOffset:7,  parentType:'Mel. Minor', tier:'color'},
-        ],
-        '7#11': [
-            {mode:'Lydian Dominant',   parentOffset:7,  parentType:'Mel. Minor', tier:'color'},
-        ],
-        '7b9': [
-            {mode:'Phrygian Dominant', parentOffset:5,  parentType:'Harm. Minor',tier:'color'},
-            {mode:'HW Diminished',                                                tier:'color'},
-            {mode:'Mixolydian ♭9♭13',  parentOffset:5,  parentType:'Harm. Major',tier:'color'},
-        ],
-        '7#9': [
-            {mode:'Altered',           parentOffset:1,  parentType:'Mel. Minor', tier:'color'},
-            {mode:'HW Diminished',                                                tier:'color'},
-        ],
-        '7alt': [
-            {mode:'Altered',           parentOffset:1,  parentType:'Mel. Minor', tier:'color'},
-            {mode:'Whole Tone',                                                   tier:'color'},
-        ],
-        '7b5': [
-            {mode:'Whole Tone',                                                   tier:'core'},
-        ],
-        'min7b5': [
-            {mode:'Locrian',           parentOffset:1,  parentType:'Major',      tier:'core'},
-            {mode:'Locrian ♮2',        parentOffset:3,  parentType:'Mel. Minor', tier:'color'},
-            {mode:'Locrian ♮6',        parentOffset:1,  parentType:'Harm. Minor',tier:'color'},
-        ],
-        'dim7': [
-            {mode:'WH Diminished',                                                tier:'color'},
-            {mode:'HW Diminished',                                                tier:'color'},
-        ],
-    };
-
     // ══════════════════════════════════════════════════════════════════════
     // NEW COMBINATORIAL CHORD SYSTEM (manual/random mode only)
-    // The fixed droneTypes/droneScaleMap above are left untouched and still
-    // drive the URL-param-locked embedded path (droneForcedType) — this new
-    // system only powers random generation when nothing is pinned.
+    // The fixed droneTypes above are left untouched and still drive the
+    // URL-param-locked embedded path (droneForcedType) — this new system
+    // only powers random generation when nothing is pinned.
     // ══════════════════════════════════════════════════════════════════════
 
     // Triad shape → base intervals
@@ -782,7 +677,7 @@
     const SEVENTH_DEFS = {
         major:      { none:{i:null,sym:''},        six:{i:9,sym:'6'},   maj7:{i:11,sym:'maj7'},        dom7:{i:10,sym:'7'} },
         minor:      { none:{i:null,sym:'m'},        six:{i:9,sym:'m6'},  maj7:{i:11,sym:'m(maj7)'},     dom7:{i:10,sym:'m7'} },
-        diminished: { none:{i:null,sym:'\u00b0'},   dim7:{i:9,sym:'\u00b07'},                            dom7:{i:10,sym:'m7\u266d5'} },
+        diminished: { none:{i:null,sym:'\u00b0'},   dim7:{i:9,sym:'\u00b07'},   maj7:{i:11,sym:'\u00b0(maj7)'},   dom7:{i:10,sym:'m7\u266d5'} },
         augmented:  { none:{i:null,sym:'+'},                             maj7:{i:11,sym:'maj7#5'},      dom7:{i:10,sym:'7#5'} },
         b5:         { none:{i:null,sym:'(♭5)'},                     maj7:{i:11,sym:'maj7♭5'}, dom7:{i:10,sym:'7♭5'} },
         sus2:       { none:{i:null,sym:'sus2'},                                                          dom7:{i:10,sym:'7sus2'} },
@@ -841,81 +736,6 @@
         sus4:       { dom7: ['9','13'] },
     };
 
-    // Rule-based scale suggestions for the combinatorial system. Deliberately
-    // narrower than the hand-verified droneScaleMap above: covers major, minor,
-    // and diminished triads with a real seventh, since those map onto
-    // well-established jazz theory. Augmented, sus, bare triads, and 6th chords
-    // return no suggestion rather than risk a shaky guess.
-    function suggestScalesNew(shapeId, seventhId, chosenTensionIds) {
-        const t9 = chosenTensionIds.ninth;
-        const t11 = chosenTensionIds.eleventh;
-
-        if (shapeId === 'major') {
-            if (seventhId === 'maj7') {
-                if (t11 === '#11') return [{mode:'Lydian', parentOffset:7, parentType:'Major', tier:'core'}];
-                return [
-                    {mode:'Ionian', parentOffset:0, parentType:'Major', tier:'core'},
-                    {mode:'Lydian', parentOffset:7, parentType:'Major', tier:'core'},
-                ];
-            }
-            if (seventhId === 'dom7') {
-                if (t9 === 'b9') return [
-                    {mode:'Phrygian Dominant', parentOffset:5, parentType:'Harm. Minor', tier:'color'},
-                    {mode:'HW Diminished', tier:'color'},
-                    {mode:'Mixolydian \u266d9\u266d13', parentOffset:5, parentType:'Harm. Major', tier:'color'},
-                ];
-                if (t9 === '#9') return [
-                    {mode:'Altered', parentOffset:1, parentType:'Mel. Minor', tier:'color'},
-                    {mode:'HW Diminished', tier:'color'},
-                ];
-                if (t11 === '#11') return [{mode:'Lydian Dominant', parentOffset:7, parentType:'Mel. Minor', tier:'color'}];
-                return [
-                    {mode:'Mixolydian', parentOffset:5, parentType:'Major', tier:'core'},
-                    {mode:'Lydian Dominant', parentOffset:7, parentType:'Mel. Minor', tier:'color'},
-                    {mode:'Mixolydian \u266d6', parentOffset:5, parentType:'Mel. Minor', tier:'color'},
-                ];
-            }
-        }
-
-        if (shapeId === 'minor') {
-            if (seventhId === 'maj7') return [{mode:'Melodic Minor', tier:'core'}];
-            if (seventhId === 'dom7') {
-                if (t11 === '11') return [
-                    {mode:'Dorian', parentOffset:10, parentType:'Major', tier:'core'},
-                    {mode:'Phrygian', parentOffset:8, parentType:'Major', tier:'core'},
-                    {mode:'Dorian \u266d2', parentOffset:10, parentType:'Mel. Minor', tier:'color'},
-                ];
-                return [
-                    {mode:'Dorian', parentOffset:10, parentType:'Major', tier:'core'},
-                    {mode:'Aeolian', parentOffset:3, parentType:'Major', tier:'core'},
-                    {mode:'Phrygian', parentOffset:8, parentType:'Major', tier:'core'},
-                ];
-            }
-        }
-
-        if (shapeId === 'b5') {
-            // Whole Tone is the honest fit here — it's the scale that actually
-            // omits the natural 5th, matching a chord where the 5th is genuinely
-            // altered rather than extended. maj7♭5 is rare/exotic enough that no
-            // confident suggestion is offered, same philosophy as elsewhere here.
-            if (seventhId === 'dom7') return [{mode:'Whole Tone', tier:'core'}];
-        }
-
-        if (shapeId === 'diminished') {
-            if (seventhId === 'dom7') return [ // half-diminished, m7♭5
-                {mode:'Locrian', parentOffset:1, parentType:'Major', tier:'core'},
-                {mode:'Locrian \u266e2', parentOffset:3, parentType:'Mel. Minor', tier:'color'},
-                {mode:'Locrian \u266e6', parentOffset:1, parentType:'Harm. Minor', tier:'color'},
-            ];
-            if (seventhId === 'dim7') return [
-                {mode:'WH Diminished', tier:'color'},
-                {mode:'HW Diminished', tier:'color'},
-            ];
-        }
-
-        return [];
-    }
-
     function droneGenNew() {
         // Pick a shape
         const shapes = Object.keys(SHAPE_DEFS).filter(s => droneEnabledShapes.has(s));
@@ -966,7 +786,6 @@
         const includeComplex = document.getElementById('complexChordsToggle')?.checked ?? false;
         const standardForThisChord = (STANDARD_TENSIONS[shapeId] && STANDARD_TENSIONS[shapeId][seventhId]) || [];
         const families = availableTensionFamilies(shapeId, seventhId);
-        const chosenTensionIds = { ninth:null, eleventh:null, thirteenth:null };
         const tensionSymbols = [];
         families.forEach(fam => {
             let opts = TENSION_FAMILY_DEFS[fam].filter(o => droneEnabledTensions.has(o.id));
@@ -975,7 +794,6 @@
                 const chosen = opts[~~(Math.random() * opts.length)];
                 intervals.push(chosen.i);
                 tensionSymbols.push(chosen.sym);
-                chosenTensionIds[fam] = chosen.id;
             }
         });
 
@@ -1012,22 +830,9 @@
             root: r,
             freqs: voicing.map(i => droneFreq(ro + i)),
             notes: voicing.map(i => droneRoots[((ro + i) % 12 + 12) % 12]).join(' - '),
-            scales: suggestScalesNew(shapeId, seventhId, chosenTensionIds),
         };
     }
 
-    function droneFormatScales(chord) {
-        if (!chord || !chord.scales || !chord.scales.length) return '';
-        const rootIdx = droneRoots.indexOf(chord.root);
-        return chord.scales.map(s => {
-            let label = s.mode;
-            if (s.parentOffset !== undefined && s.parentType) {
-                const parentIdx = (rootIdx + s.parentOffset) % 12;
-                label += ' (' + droneRoots[parentIdx] + ' ' + s.parentType + ')';
-            }
-            return `<span class="scale-tag ${s.tier}">${label}</span>`;
-        }).join('<span style="color:var(--border)"> · </span>');
-    }
     const dronePatchDefs = {
         strings: { layers:[{w:'sawtooth',detunes:[-8,0,8],gain:0.5},{w:'triangle',detunes:[0],gain:0.25}], attack:1.2, filter:{type:'lowpass',freq:1200,q:1}, vol:1.0 },
         warm:    { layers:[{w:'sawtooth',detunes:[-6,0,6],gain:0.45},{w:'sine',detunes:[0],gain:0.3}], attack:2.0, filter:{type:'lowpass',freq:800,q:0.5}, vol:1.1 },
@@ -1141,14 +946,12 @@
             bassNoteName = droneRoots[((ro + chosen) % 12 + 12) % 12];
         }
 
-        const scales = droneScaleMap[t.n] || [];
         const sym = bassNoteName ? r + t.n + '/' + bassNoteName : r + t.n;
         return {
             sym,
             root: r,
             freqs: voicing.map(i => droneFreq(ro + i)),
             notes: voicing.map(i => droneRoots[((ro + i) % 12 + 12) % 12]).join(' - '),
-            scales: scales
         };
     }
 
@@ -1235,17 +1038,14 @@
     function droneUpdateDisplay() {
         const sym = document.getElementById('droneSymbol');
         const notes = document.getElementById('droneNotes');
-        const scales = document.getElementById('droneScales');
         if (droneShow && droneChord) {
             sym.textContent = droneChord.sym;
             sym.classList.remove('hidden');
             notes.textContent = droneChord.notes;
-            scales.innerHTML = droneFormatScales(droneChord);
         } else {
             sym.textContent = '???';
             sym.classList.add('hidden');
             notes.textContent = '';
-            scales.innerHTML = '';
         }
         droneUpdateHistoryUI();
     }
