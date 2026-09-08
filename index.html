@@ -7,25 +7,27 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Chord Drone">
     <title>Chord Drone</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        /* ── Global ─────────────────────────────────────────────────────── */
+        /* ── Global — "Ledger" design system, matching the main app ───────── */
         :root {
-            --paper: #f5f0e8;
-            --paper-dark: #ece4d0;
-            --ink: #1a1510;
-            --ink-light: #3d2e1e;
-            --ink-muted: #7a6a56;
-            --border: #c8b89a;
-            --amber: #c8841a;
+            --paper: #f1ead9;
+            --paper-dark: #e8dfca;
+            --ink: #171512;
+            --ink-light: #3a3226;
+            --ink-muted: #6e6656;
+            --border: #b3a68e;
+            --amber: #c4531c;
             --red: #8b2020;
             --blue: #1a3060;
-            --green: #1a5c2a;
+            --green: #3c6b4a;
+            --font-display: 'Big Shoulders Display', sans-serif;
+            --font-body: 'Work Sans', sans-serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
         body {
-            font-family: 'Libre Baskerville', serif;
+            font-family: var(--font-body);
             background: var(--paper);
             color: var(--ink);
             min-height: 100vh;
@@ -48,19 +50,22 @@
             text-align: center;
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 3px solid var(--ink);
         }
         .tool-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-family: var(--font-display);
+            font-size: 2.4rem;
             font-weight: 900;
-            letter-spacing: -0.01em;
+            text-transform: uppercase;
+            letter-spacing: 0.005em;
+            line-height: 0.95;
         }
+        .tool-header h1 .accent { color: var(--amber); }
 
         /* ── Cards ──────────────────────────────────────────────────────── */
         .card {
             border: 2px solid var(--ink);
-            border-radius: 4px;
+            border-radius: 0;
             padding: 1.2rem 1rem;
             margin-bottom: 1.2rem;
         }
@@ -70,10 +75,11 @@
         /* ── Labels ─────────────────────────────────────────────────────── */
         label.section-label {
             display: block;
-            font-size: 0.62rem;
+            font-size: 0.68rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--ink-muted);
+            letter-spacing: 0.12em;
+            color: var(--amber);
             margin-bottom: 0.5rem;
         }
 
@@ -87,8 +93,8 @@
             padding: 0.5rem;
             background: none;
             border: 1px solid var(--border);
-            border-radius: 3px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.75rem;
             color: var(--ink-light);
             cursor: pointer;
@@ -111,7 +117,7 @@
             height: 3px; 
             -webkit-appearance: none; 
             background: var(--border); 
-            border-radius: 2px; 
+            border-radius: 0; 
             outline: none; 
         }
         input[type="range"]::-webkit-slider-thumb { 
@@ -184,8 +190,8 @@
             padding: 0.35rem 0.2rem;
             background: none;
             border: 1px solid var(--border);
-            border-radius: 3px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.72rem;
             color: var(--ink-muted);
             cursor: pointer;
@@ -204,8 +210,8 @@
             padding: 0.3rem;
             background: none;
             border: 1px solid var(--border);
-            border-radius: 3px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -230,7 +236,7 @@
             background: var(--paper);
             color: var(--ink-muted);
             cursor: pointer;
-            border-radius: 2px;
+            border-radius: 0;
             transition: all 0.15s;
         }
         .circle-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--paper-dark); }
@@ -241,20 +247,23 @@
         /* ── Buttons ────────────────────────────────────────────────────── */
         .drone-btn {
             width: 100%;
-            padding: 0.9rem;
-            background: var(--ink);
+            padding: 0.95rem;
+            background: var(--amber);
             color: var(--paper);
             border: none;
-            border-radius: 4px;
-            font-family: 'Libre Baskerville', serif;
-            font-size: 0.95rem;
+            border-radius: 0;
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
             cursor: pointer;
             transition: all 0.15s;
             margin-bottom: 0.6rem;
         }
-        .drone-btn:hover { 
-            background: var(--amber); 
-            color: var(--ink); 
+        .drone-btn:hover {
+            background: var(--ink);
+            color: var(--paper);
         }
         .show-btn {
             width: 100%;
@@ -262,8 +271,8 @@
             background: transparent;
             color: var(--ink);
             border: 1.5px solid var(--border);
-            border-radius: 4px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.15s;
@@ -281,7 +290,7 @@
         /* ── Chord Display ──────────────────────────────────────────────── */
         .chord-display {
             border: 2px solid var(--ink);
-            border-radius: 4px;
+            border-radius: 0;
             padding: 1.8rem 1rem;
             text-align: center;
             min-height: 120px;
@@ -291,9 +300,9 @@
             margin-bottom: 1rem;
         }
         .chord-symbol {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 3.2rem;
+            font-weight: 900;
             color: var(--ink);
             margin-bottom: 0.4rem;
         }
@@ -317,7 +326,7 @@
         .progress-wrap {
             height: 4px;
             background: var(--paper-dark);
-            border-radius: 2px;
+            border-radius: 0;
             margin-bottom: 0.8rem;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -325,7 +334,7 @@
         .progress-bar {
             height: 100%;
             background: var(--amber);
-            border-radius: 2px;
+            border-radius: 0;
             width: 0%;
             transition: width 1s linear;
         }
@@ -351,8 +360,8 @@
             padding: 0.4rem;
             background: none;
             border: 1px solid var(--border);
-            border-radius: 3px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.72rem;
             color: var(--ink-muted);
             cursor: pointer;
@@ -372,8 +381,8 @@
             background: transparent;
             color: var(--ink-muted);
             border: 1.5px solid var(--border);
-            border-radius: 4px;
-            font-family: 'Libre Baskerville', serif;
+            border-radius: 0;
+            font-family: var(--font-body);
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.15s;
@@ -409,7 +418,7 @@
             justify-content: space-between;
             align-items: baseline;
             padding: 0.25rem 0.5rem;
-            border-radius: 3px;
+            border-radius: 0;
             font-size: 0.78rem;
             background: var(--paper-dark);
             border: 1px solid transparent;
@@ -418,7 +427,7 @@
             border-color: var(--amber);
             background: rgba(200,132,26,0.07);
         }
-        .history-item .h-sym { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--ink); }
+        .history-item .h-sym { font-family: var(--font-display); font-weight: 700; color: var(--ink); }
         .history-item .h-num { font-size: 0.65rem; color: var(--ink-muted); }
 
     </style>
@@ -426,6 +435,10 @@
 <body>
 
 <div id="drone">
+
+    <div class="tool-header">
+        <h1>Chord <span class="accent">Drone</span></h1>
+    </div>
 
     <div class="card">
         <div class="control-group">
@@ -548,6 +561,10 @@
             <label class="check-label" style="margin-top:0.7rem;">
                 <input type="checkbox" id="complexChordsToggle">
                 <span>Include complex/unusual tensions (e.g. maj7♭9)</span>
+            </label>
+            <label class="check-label" style="margin-top:0.4rem;">
+                <input type="checkbox" id="alwaysTensionToggle" checked>
+                <span>Always include a checked tension (uncheck for occasional plain chords instead)</span>
             </label>
         </div>
         <div class="control-group">
@@ -780,16 +797,23 @@
         let intervals = [...SHAPE_DEFS[shapeId].triad];
         if (seventhDef.i !== null) intervals.push(seventhDef.i);
 
-        // Tensions — for each family available on this shape/seventh, maybe
-        // add one checked option (never more than one per family)
+        // Tensions — for each family available on this shape/seventh, add one
+        // checked option (never more than one per family). Whether a checked
+        // family actually gets used every time or only sometimes is itself a
+        // checkbox (alwaysTensionToggle) — checked by default, so "Major +
+        // Major 7th + natural 9" reliably means "always Major9," matching
+        // what the app already promises for triad/seventh ("check just one
+        // and it'll always play that same quality"). Uncheck it to bring
+        // back the occasional plain-chord variety instead.
         const includeComplex = document.getElementById('complexChordsToggle')?.checked ?? false;
+        const alwaysIncludeTension = document.getElementById('alwaysTensionToggle')?.checked ?? true;
         const standardForThisChord = (STANDARD_TENSIONS[shapeId] && STANDARD_TENSIONS[shapeId][seventhId]) || [];
         const families = availableTensionFamilies(shapeId, seventhId);
         const tensionSymbols = [];
         families.forEach(fam => {
             let opts = TENSION_FAMILY_DEFS[fam].filter(o => droneEnabledTensions.has(o.id));
             if (!includeComplex) opts = opts.filter(o => standardForThisChord.includes(o.id));
-            if (opts.length && Math.random() < 0.5) {
+            if (opts.length && (alwaysIncludeTension || Math.random() < 0.5)) {
                 const chosen = opts[~~(Math.random() * opts.length)];
                 intervals.push(chosen.i);
                 tensionSymbols.push(chosen.sym);
